@@ -378,12 +378,12 @@ async function startGame(){
  if(!selectedTeam){msg.textContent="Please select your team before entering the case room.";msg.classList.remove('hidden');return;}
  if(!player){msg.textContent="Please select your name before entering the case room.";msg.classList.remove('hidden');return;}
  const completionKey='dhlDetectivesCompleted|'+selectedTeam+'|'+player;
- if(localStorage.getItem(completionKey)==="completed"){msg.textContent="This detective has already completed the case. The quiz is one-time only and cannot be retaken.";msg.classList.remove('hidden');return;}
  try{
    const res=await fetch('/.netlify/functions/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:"start",team:selectedTeam,player})});
    const data=await res.json().catch(()=>({}));
-   if(res.status===409||data.completed){msg.textContent="This detective has already completed the case. The quiz is one-time only and cannot be retaken.";msg.classList.remove('hidden');return;}
+   if(res.status===409||data.completed){localStorage.setItem(completionKey,"completed");msg.textContent="This detective has already completed the case. The quiz is one-time only and cannot be retaken.";msg.classList.remove('hidden');return;}
    if(!res.ok){msg.textContent="The live case service is unavailable. Please try again in a moment.";msg.classList.remove('hidden');return;}
+   localStorage.removeItem(completionKey);
  }catch(e){msg.textContent="The live case service is unavailable. Please try again in a moment.";msg.classList.remove('hidden');return;}
  msg.classList.add('hidden');qi=0;score=0;locked.fill(false);answers.fill(null);clues.fill(null);correctIdx.fill(null);busy=false;
  accusationSubmitted=false;

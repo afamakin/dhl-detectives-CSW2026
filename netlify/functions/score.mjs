@@ -190,8 +190,16 @@ const store = () =>
     consistency: "strong"
   });
 
+// Keys use only lowercase letters, digits and dashes. Spaces and "|" in
+// keys could not be reliably read or deleted, which broke admin resets.
+const slug = (value) =>
+  String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 const playerKey = (team, player) =>
-  `${PLAYER_PREFIX}${team}|${player}`;
+  `${PLAYER_PREFIX}${slug(team)}--${slug(player)}`;
 
 const emptyScores = () =>
   Object.fromEntries(
@@ -357,6 +365,13 @@ export default async (req) => {
       }
 
       await s.delete(key);
+
+      if (await s.get(key, { type: "json" })) {
+        return json(
+          { error: "Reset failed: player record still exists" },
+          500
+        );
+      }
 
       const scores = await recomputeTotals(s);
 
