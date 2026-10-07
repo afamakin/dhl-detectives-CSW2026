@@ -1,0 +1,7 @@
+{
+  "name": "dhl-detectives-csw2026",
+  "private": true,
+  "dependencies": {
+    "@netlify/blobs": "latest"
+  }
+}
