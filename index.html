@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WELCOME, DHL DETECTIVES — Customer Service Week 2026</title>
+<style>
+:root{
+  --bg:#070b14;
+  --panel:#101827;
+  --panel2:#151f31;
+  --gold:#f5c542;
+  --red:#e63946;
+  --blue:#4ea8de;
+  --green:#53d769;
+  --text:#f5f7fb;
+  --muted:#aab5c7;
+  --line:#2a3952;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:
+  radial-gradient(circle at 20% 10%,#172744 0,transparent 32%),
+  radial-gradient(circle at 85% 80%,#24161d 0,transparent 30%),var(--bg);
+  color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+.screen{display:none;min-height:100vh;padding:28px}
+.screen.active{display:flex;align-items:center;justify-content:center}
+.wrap{width:min(1050px,100%);margin:auto}
+.hero{text-align:center;padding:45px 20px}
+.badge{
+  display:inline-block;border:1px solid var(--gold);color:var(--gold);
+  padding:8px 14px;border-radius:999px;letter-spacing:2px;font-size:12px;font-weight:bold
+}
+h1{font-size:clamp(42px,8vw,82px);margin:22px 0 8px;letter-spacing:2px}
+h2{font-size:clamp(28px,5vw,46px);margin:0 0 12px}
+.subtitle{font-size:clamp(18px,3vw,28px);color:var(--gold);font-weight:bold;letter-spacing:4px}
+.lead{color:var(--muted);font-size:18px;line-height:1.6;max-width:720px;margin:20px auto}
+.card{
+  background:linear-gradient(145deg,rgba(21,31,49,.97),rgba(10,16,27,.97));
+  border:1px solid var(--line);border-radius:22px;padding:28px;
+  box-shadow:0 20px 60px rgba(0,0,0,.35)
+}
+.btn{
+  border:0;border-radius:12px;padding:14px 22px;font-weight:bold;
+  color:#08101b;background:var(--gold);margin:6px;transition:.15s
+}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn.secondary{background:#25344e;color:var(--text)}
+.btn.red{background:var(--red);color:white}
+input{
+  width:100%;padding:15px;border-radius:12px;border:1px solid var(--line);
+  background:#0a111d;color:white;outline:none
+}
+label{display:block;color:var(--muted);font-size:13px;margin:0 0 8px;font-weight:bold}
+.team-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:20px 0}
+.team{
+  padding:18px 10px;border:1px solid var(--line);border-radius:14px;
+  background:#0c1422;color:white;font-weight:bold
+}
+.team.selected{border-color:var(--gold);background:#272512;color:var(--gold)}
+@media(max-width:750px){.team-grid{grid-template-columns:1fr 1fr}.setup-fields{grid-template-columns:1fr!important}.screen{padding:15px}}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px}
+.progress{height:9px;background:#1d293d;border-radius:99px;overflow:hidden}
+.progress span{display:block;height:100%;background:var(--gold);width:0;transition:.3s}
+.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin:8px 0 20px}
+.question-number{color:var(--gold);font-weight:bold;letter-spacing:1px}
+.question{font-size:clamp(23px,4vw,34px);line-height:1.3;margin:10px 0 25px}
+.answers{display:grid;gap:12px}
+.answer{
+  text-align:left;padding:17px 18px;border-radius:13px;border:1px solid var(--line);
+  background:#0c1422;color:white
+}
+.answer:hover{border-color:var(--blue);background:#122035}
+.answer.correct{border-color:var(--green);background:#12321d}
+.answer.wrong{border-color:var(--red);background:#35151a}
+.feedback{min-height:55px;padding-top:18px;color:var(--muted);line-height:1.5}
+.next{text-align:right;margin-top:8px}
+.evidence-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+@media(max-width:800px){.evidence-grid{grid-template-columns:1fr}}
+.evidence{
+  background:#111b2b;border:1px solid #344660;border-left:5px solid var(--gold);
+  padding:18px;border-radius:12px;min-height:145px
+}
+.evidence h3{margin:0 0 8px;color:var(--gold);font-size:14px;letter-spacing:1px}
+.evidence p{margin:0;color:#d7dfeb;line-height:1.5}
+.locked{opacity:.48;filter:grayscale(.5)}
+.suspects{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:900px){.suspects{grid-template-columns:1fr 1fr}}
+.suspect{
+  border:1px solid var(--line);border-radius:14px;padding:16px;background:#0c1422
+}
+.suspect h3{margin:0 0 7px;color:var(--gold)}
+.suspect p{margin:5px 0;color:var(--muted);font-size:13px;line-height:1.4}
+.accuse-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:800px){.accuse-grid{grid-template-columns:1fr 1fr}}
+select{
+ width:100%;padding:15px;border-radius:12px;background:#0a111d;color:white;border:1px solid var(--line)
+}
+.result{text-align:center}
+.big{font-size:clamp(48px,10vw,100px);font-weight:900;color:var(--gold);margin:15px 0}
+.scoreboard{display:grid;gap:10px;margin-top:20px}
+.score-row{
+ display:flex;justify-content:space-between;align-items:center;padding:16px 18px;
+ background:#0c1422;border:1px solid var(--line);border-radius:12px
+}
+.rank{color:var(--gold);font-weight:bold;width:40px}
+.small{font-size:13px;color:var(--muted)}
+.timer{font-size:22px;font-weight:bold;color:var(--gold)}
+.notice{padding:13px 15px;border-radius:12px;background:#15243a;color:#cbd8ea;margin:15px 0;line-height:1.5}
+.hidden{display:none!important}
+hr{border:0;border-top:1px solid var(--line);margin:24px 0}
+
+/* Detective game visual upgrade */
+.game-visual{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  margin-bottom:18px;padding:18px 22px;border-radius:18px;
+  background:linear-gradient(135deg,rgba(245,197,66,.12),rgba(78,168,222,.08));
+  border:1px solid #344660;
+}
+.case-icon{
+  width:58px;height:58px;border-radius:16px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#f5c542,#b88a12);color:#08101b;
+  font-size:29px;box-shadow:0 8px 24px rgba(0,0,0,.3)
+}
+.visual-copy{flex:1}.visual-copy b{font-size:16px}.visual-copy span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.case-stamp{
+  border:1px dashed #e63946;color:#ff6570;padding:8px 10px;border-radius:8px;
+  font-size:10px;font-weight:900;letter-spacing:1.5px;transform:rotate(-2deg)
+}
+.instruction-board{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0
+}
+.instruction{
+  padding:17px;border-radius:15px;background:#0c1422;border:1px solid var(--line)
+}
+.instruction .num{
+  width:30px;height:30px;border-radius:50%;background:var(--gold);color:#08101b;
+  display:grid;place-items:center;font-weight:900;margin-bottom:10px
+}
+.instruction b{display:block;margin-bottom:5px}.instruction span{color:var(--muted);font-size:13px;line-height:1.45}
+.question-visual{
+  margin:0 0 22px;padding:16px;border-radius:14px;
+  background:linear-gradient(90deg,#0b1320,#111d2f);
+  border:1px solid #2e405b;display:flex;align-items:center;gap:14px
+}
+.evidence-icon{font-size:27px}
+.question-visual small{display:block;color:var(--gold);font-weight:800;letter-spacing:1px;margin-bottom:3px}
+.locked-answer{pointer-events:none!important;opacity:.75}
+.nav-arrows{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px}
+.nav-arrow{
+  border:1px solid var(--line);background:#0c1422;color:white;border-radius:12px;
+  padding:11px 17px;font-weight:bold
+}
+.nav-arrow:disabled{opacity:.35;cursor:not-allowed}
+.review-pill{
+  color:var(--muted);font-size:12px;text-align:center;flex:1
+}
+@media(max-width:750px){
+ .instruction-board{grid-template-columns:1fr}
+ .game-visual{padding:14px}.case-stamp{display:none}
+ .question-visual{align-items:flex-start}
+ .nav-arrow{padding:10px 12px}
+}
+
+</style>
+</head>
+<body>
+
+<section id="welcome" class="screen active">
+  <div class="wrap hero">
+    <span class="badge">CONFIDENTIAL • CUSTOMER SERVICE WEEK 2026</span>
+    <h1>WELCOME,<br>DHL DETECTIVES</h1>
+    <div class="subtitle">THE CASE OF THE MISSING CUSTOMER SERVICE AWARD</div>
+    <p class="lead">
+      A Customer Service Week surprise has gone missing. Five suspects. Ten case files.
+      A trail of evidence. One team will crack the case.
+    </p>
+    <button class="btn" onclick="show('setup')">ENTER THE CASE ROOM →</button>
+  </div>
+</section>
+
+<section id="setup" class="screen">
+  <div class="wrap">
+    <div class="card">
+      <div class="game-visual">
+        <div class="case-icon">🔎</div>
+        <div class="visual-copy"><b>DETECTIVE BRIEFING</b><span>Your answers unlock the evidence trail.</span></div>
+        <div class="case-stamp">CONFIDENTIAL</div>
+      </div>
+      <span class="badge">CASE FILE CSW-2026-001</span>
+      <h2>Before You Enter the Case Room</h2>
+      <p class="lead" style="text-align:left;margin-left:0">
+        <b>Important:</b> this is not a normal quiz. <b>Every question contains information you need to solve the mystery.</b>
+        Read the case file carefully, make your deduction, and collect the clue revealed after each question.
+        By the end, the 10 clues should give your team everything needed for the final accusation.
+      </p>
+      <div class="instruction-board">
+        <div class="instruction"><div class="num">1</div><b>READ THE CASE</b><span>Study the facts given in each question before choosing an answer.</span></div>
+        <div class="instruction"><div class="num">2</div><b>COLLECT THE CLUES</b><span>Each case file reveals another piece of the final mystery.</span></div>
+        <div class="instruction"><div class="num">3</div><b>SOLVE THE CASE</b><span>Use all 10 clues together for WHO, WHERE, WHEN and WHY.</span></div>
+      </div>
+      <h2 style="font-size:30px">Assemble Your Detective Team</h2>
+      <p class="lead" style="text-align:left;margin-left:0">
+        Choose your team and your name. Your team's total score updates live as detectives submit answers.
+      </p>
+      <div class="setup-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:18px">
+        <div>
+          <label>TEAM</label>
+          <select id="teamSelect" onchange="updatePlayers()">
+            <option value="" selected disabled>Select team</option>
+            <option value="Team Cipher">Team Cipher</option>
+            <option value="Team Enigma">Team Enigma</option>
+            <option value="Team Nexus">Team Nexus</option>
+            <option value="Team Quantum">Team Quantum</option>
+            <option value="Team Apex">Team Apex</option>
+          </select>
+        </div>
+        <div>
+          <label>PLAYER</label>
+          <select id="playerSelect" disabled>
+            <option value="">Select name</option>
+          </select>
+        </div>
+      </div>
+      <div id="setupMsg" class="notice hidden"></div>
+      <button class="btn" onclick="startGame()">ENTER CASE ROOM →</button>
+    </div>
+  </div>
+</section>
+
+<section id="game" class="screen">
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <b id="teamDisplay">Team</b><br>
+        <span class="small" id="playerDisplay">Detective</span>
+      </div>
+      <div class="timer" id="timer">00:30</div>
+    </div>
+    <div class="progress"><span id="progressBar"></span></div>
+    <div class="meta">
+      <span id="qCount">Case File 1 of 10</span>
+      <span id="scoreDisplay">Your Score: 0 • Team Total: 0</span>
+    </div>
+    <div class="card">
+      <div class="game-visual">
+        <div class="case-icon">🕵️</div>
+        <div class="visual-copy"><b id="visualTitle">CASE FILE</b><span>Read the evidence. Make your deduction.</span></div>
+        <div class="case-stamp">LIVE CASE</div>
+      </div>
+      <div class="question-visual">
+        <div class="evidence-icon">📁</div>
+        <div><small>DETECTIVE RULE</small>Every case file contains the information needed to answer the question. Your job is to connect the dots.</div>
+      </div>
+      <div class="question-number" id="category">CASE FILE 01</div>
+      <div class="question" id="question"></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="nav-arrows">
+        <button class="nav-arrow" id="backBtn" onclick="previousQuestion()">← BACK</button>
+        <div class="review-pill" id="reviewStatus">Answer the case file before moving on.</div>
+        <button class="btn hidden" id="nextBtn" onclick="nextQuestion()">NEXT CASE FILE →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="evidence" class="screen">
+  <div class="wrap">
+    <div class="card">
+      <span class="badge">EVIDENCE BOARD</span>
+      <h2>The Evidence You've Unlocked</h2>
+      <p class="lead" style="text-align:left;margin-left:0">Every case file gives you the information you need to make the next deduction. Ten clues. One final answer.</p>
+      <div id="evidenceGrid" class="evidence-grid"></div>
+      <hr>
+      <button class="btn" onclick="show('suspects')">OPEN SUSPECT FILES →</button>
+      <button class="btn secondary" onclick="show('game')">BACK TO INVESTIGATION</button>
+    </div>
+  </div>
+</section>
+
+<section id="suspects" class="screen">
+  <div class="wrap">
+    <div class="card">
+      <span class="badge">CONFIDENTIAL SUSPECT FILES</span>
+      <h2>Five People. One Mystery.</h2>
+      <div class="suspects">
+        <div class="suspect"><h3>Kolade</h3><p><b>Role:</b> Customer Service Representative</p><p><b>Location:</b> Conference Room</p><p><b>Item:</b> Blue Folder</p></div>
+        <div class="suspect"><h3>Johnson</h3><p><b>Role:</b> IT Officer</p><p><b>Location:</b> IT Desk</p><p><b>Item:</b> Black Backpack</p></div>
+        <div class="suspect"><h3>Chika</h3><p><b>Role:</b> HR / Events Coordinator</p><p><b>Location:</b> Decorations Area</p><p><b>Item:</b> Red Event File</p></div>
+        <div class="suspect"><h3>Anthony</h3><p><b>Role:</b> Sales Officer</p><p><b>Location:</b> Reception</p><p><b>Item:</b> Phone</p></div>
+        <div class="suspect"><h3>Albert</h3><p><b>Role:</b> Operations Officer</p><p><b>Location:</b> Back Corridor</p><p><b>Item:</b> Key Ring</p></div>
+      </div>
+      <hr>
+      <button class="btn" onclick="show('accusation')">MAKE YOUR ACCUSATION →</button>
+    </div>
+  </div>
+</section>
+
+<section id="accusation" class="screen">
+  <div class="wrap">
+    <div class="card">
+      <span class="badge">FINAL ACCUSATION</span>
+      <h2>Who Took the Award?</h2>
+      <p class="lead" style="text-align:left;margin-left:0">
+        Use the evidence. Your final accusation has four parts: <b>WHO • WHERE • WHEN • WHY</b>.
+      </p>
+      <div class="accuse-grid">
+        <div><label>WHO?</label><select id="who"><option value="">Choose suspect</option><option>Kolade</option><option>Johnson</option><option>Chika</option><option>Anthony</option><option>Albert</option></select></div>
+        <div><label>WHERE?</label><select id="where"><option value="">Choose location</option><option>Conference Room</option><option>IT Desk</option><option>Reception</option><option>Back Corridor</option><option>Decorations Box</option></select></div>
+        <div><label>WHEN?</label><select id="when"><option value="">Choose time</option><option>1:00–2:00 p.m.</option><option>2:00–3:00 p.m.</option><option>3:00–4:00 p.m.</option></select></div>
+        <div><label>WHY?</label><select id="why"><option value="">Choose motive</option><option>Personal gain</option><option>Customer Service Week surprise</option><option>To damage company property</option><option>Unknown</option></select></div>
+      </div>
+      <div class="notice">⚠️ Once you submit, the case will be locked and your final score will be revealed.</div>
+      <button class="btn red" onclick="submitAccusation()">SUBMIT FINAL ACCUSATION</button>
+    </div>
+  </div>
+</section>
+
+<section id="result" class="screen">
+  <div class="wrap">
+    <div class="card result">
+      <span class="badge">CASE FILE CLOSED</span>
+      <h2 id="resultTitle">CASE CLOSED</h2>
+      <p id="thankYou" class="lead">Thank you for helping us solve this case, Detective!</p>
+      <div class="big" id="finalScore">0 / 20</div>
+      <p id="resultText" class="lead"></p>
+      <h2 style="font-size:26px">LIVE TEAM LEADERBOARD</h2>
+      <div id="leaderboard" class="scoreboard"></div>
+      <p class="small">LIVE GROUP SCOREBOARD • Team totals refresh automatically across connected devices.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+const roster = {
+ "Team Cipher":["Kayode Adeniji","Aderonke Kuyebi","Ayodeji Okewale","Oluwatomilayo Aiyegbayo","Oluseyi Arikawe","Olanrewaju Yusuf","Olabode Olubunmi","Oluchi Ajoku"],
+ "Team Enigma":["Ololade Onishemo","Omotola Muideen","Deborah Oparinde","Emmanuel Ayomikuseyin","Moses Adeleye","Aderonke Adefeso","Bukola Kuyoro","Winifred Otu"],
+ "Team Nexus":["Tolulope Odunlami","Temitayo Bakare","Rasheedat Odebe","Adebola Yakubu","Oladipupo Afolabi","Adefisayo Adeboye","Oluwafunmilola Taylor","Blessing Nwadiolu"],
+ "Team Quantum":["Mojisola Adegboyega","Gbemisola Akeredolu","Uduak Inyang","Mosunmola Moshood","Festus Oluwatuyi","Olayinka Fasusi","Bukola Kolawole"],
+ "Team Apex":["Olayemi Olusona","Emmanuel Ademiluyi","Benjamin Aghogban","Leo Ugbogure","Omotayo Ajadi","Samuel Etim","Raphael Audu"]
+};
+
+const questions = [
+{cat:"CASE FILE 01 • THE LAST SIGHTING",q:"At 2:00 p.m., the Customer Service Award was seen on the conference-room display stand. At 2:30 p.m., it was missing. Based only on these facts, when could the award have disappeared?",a:["Before 2:00 p.m.","Between 2:00 and 2:30 p.m.","After 2:30 p.m.","Only at exactly 2:15 p.m."]},
+{cat:"CASE FILE 02 • THE ACCESS LOG",q:"NEW EVIDENCE: The access log records Kolade in the Conference Room at 2:08 p.m., Chika in the Decorations Area at 2:10 p.m., Johnson at the IT Desk at 2:12 p.m., and Anthony at Reception at 2:18 p.m. Who was recorded in the area most directly connected to the event setup?",a:["Kolade","Chika","Johnson","Anthony"]},
+{cat:"CASE FILE 03 • THE SUSPECT FILES",q:"NEW EVIDENCE: Kolade is a Customer Service Representative, Johnson is an IT Officer, Chika is the HR / Events Coordinator, Anthony is a Sales Officer, and Albert is an Operations Officer. Which role gives someone the most natural reason to be handling Customer Service Week decorations?",a:["Customer Service Representative","IT Officer","HR / Events Coordinator","Sales Officer"]},
+{cat:"CASE FILE 04 • THE RED EVENT FILE",q:"NEW EVIDENCE: A red event file is found beside the decorations materials. Chika's suspect file lists a Red Event File as the item associated with her. What is the fairest conclusion?",a:["It proves Chika stole the award","It connects Chika to the event materials, but more evidence is needed","It proves Albert moved the award","It proves there was no mystery"]},
+{cat:"CASE FILE 05 • THE 2:20 SIGHTING",q:"NEW EVIDENCE: A witness saw someone carrying Customer Service Week decorations near the Decorations Area at approximately 2:20 p.m. Which comparison is most useful?",a:["The person's favourite colour","Whether the suspect's role, location and timing fit the sighting","Whether the suspect owns a phone","What the suspect had for lunch"]},
+{cat:"CASE FILE 06 • THE SURPRISE NOTE",q:"NEW EVIDENCE: The event planner's note says, “Keep the Customer Service surprise hidden until the reveal.” What does this suggest about the missing award?",a:["It may have been moved as part of a planned surprise","It was definitely stolen","Someone intended to keep it permanently","The event had been cancelled"]},
+{cat:"CASE FILE 07 • THE ALIBI CHECK",q:"NEW EVIDENCE: Albert is assigned to the Back Corridor, but the access log shows he did not enter the Decorations Area during the disappearance window. What does that tell detectives?",a:["Albert must be guilty","Albert can be eliminated from the Decorations-Area theory","The access log is useless","Albert definitely planned the surprise"]},
+{cat:"CASE FILE 08 • THE DESTINATION",q:"NEW EVIDENCE: The Decorations Box contains wrapping materials, the red event file, and enough space for the Customer Service Award. Where should detectives look for the missing award?",a:["IT Desk","Reception","Decorations Box","Back Corridor"]},
+{cat:"CASE FILE 09 • NO THEFT",q:"NEW EVIDENCE: The award is found safely inside the Decorations Box. Nothing else is missing, and the event planner's note confirms a surprise reveal. What is the strongest conclusion?",a:["The award was likely moved rather than stolen for personal gain","The award was stolen for resale","The award was permanently lost","Someone wanted to destroy it"]},
+{cat:"CASE FILE 10 • SOLVE THE CASE",q:"FINAL REVIEW: The award disappeared between 2:00 and 2:30 p.m. Chika was in the Decorations Area at 2:10, her role involved event coordination, her Red Event File was found with the decorations, a witness saw event materials being moved around 2:20, and the award was found in the Decorations Box. Who most logically moved the award?",a:["Kolade","Johnson","Chika","Anthony","Albert"]}];
+
+const API='/.netlify/functions/score';
+const clues=Array(10).fill(null),correctIdx=Array(10).fill(null);let busy=false;
+let selectedTeam="Team Cipher",player="",qi=0,score=0,timer=null,timeLeft=30,answered=false,accusationSubmitted=false;
+let sessionId="",scorePoller=null;
+const locked=Array(10).fill(false), answers=Array(10).fill(null);
+const teamScores={"Team Cipher":0,"Team Enigma":0,"Team Nexus":0,"Team Quantum":0,"Team Apex":0};
+const finalTeamScores={"Team Cipher":null,"Team Enigma":null,"Team Nexus":null,"Team Quantum":null,"Team Apex":null};
+
+function updatePlayers(){
+ const team=document.getElementById('teamSelect').value,select=document.getElementById('playerSelect');
+ select.innerHTML='<option value="">Select name</option>';
+ select.disabled=!team;
+ (roster[team]||[]).forEach(name=>{const o=document.createElement('option');o.value=name;o.textContent=name;select.appendChild(o);});
+ selectedTeam=team;
+}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==="evidence")renderEvidence(10);}
+async function startGame(){
+ selectedTeam=document.getElementById('teamSelect').value;player=document.getElementById('playerSelect').value;
+ const msg=document.getElementById('setupMsg');
+ if(!selectedTeam){msg.textContent="Please select your team before entering the case room.";msg.classList.remove('hidden');return;}
+ if(!player){msg.textContent="Please select your name before entering the case room.";msg.classList.remove('hidden');return;}
+ const completionKey='dhlDetectivesCompleted|'+selectedTeam+'|'+player;
+ if(localStorage.getItem(completionKey)==="completed"){msg.textContent="This detective has already completed the case. The quiz is one-time only and cannot be retaken.";msg.classList.remove('hidden');return;}
+ try{
+   const res=await fetch('/.netlify/functions/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:"start",team:selectedTeam,player})});
+   const data=await res.json().catch(()=>({}));
+   if(res.status===409||data.completed){msg.textContent="This detective has already completed the case. The quiz is one-time only and cannot be retaken.";msg.classList.remove('hidden');return;}
+   if(!res.ok){msg.textContent="The live case service is unavailable. Please try again in a moment.";msg.classList.remove('hidden');return;}
+ }catch(e){msg.textContent="The live case service is unavailable. Please try again in a moment.";msg.classList.remove('hidden');return;}
+ msg.classList.add('hidden');qi=0;score=0;locked.fill(false);answers.fill(null);clues.fill(null);correctIdx.fill(null);busy=false;
+ accusationSubmitted=false;
+ sessionId=`${selectedTeam}|${player}`;
+ document.getElementById('teamDisplay').textContent=selectedTeam;document.getElementById('playerDisplay').textContent=player;
+ show('game');loadQuestion();refreshLeaderboard();clearInterval(scorePoller);scorePoller=setInterval(refreshLeaderboard,3000);
+}
+function loadQuestion(){
+ const x=questions[qi];answered=locked[qi];
+ document.getElementById('category').textContent=x.cat;
+ document.getElementById('visualTitle').textContent=`CASE FILE ${String(qi+1).padStart(2,"0")}`;
+ document.getElementById('question').textContent=x.q;
+ document.getElementById('qCount').textContent=`Case File ${qi+1} of 10`;
+ document.getElementById('scoreDisplay').textContent=`Your Score: ${score} • Team Total: ${teamScores[selectedTeam]}`;
+ document.getElementById('progressBar').style.width=((qi)/10*100)+"%";
+ document.getElementById('feedback').textContent="";
+ document.getElementById('nextBtn').classList.toggle('hidden',!answered);
+ document.getElementById('backBtn').disabled=(qi===0);
+ const status=document.getElementById('reviewStatus');
+ status.textContent=answered?"ANSWER LOCKED • REVIEW MODE":"Choose an answer before the timer ends.";
+
+ const box=document.getElementById('answers');box.innerHTML="";
+ x.a.forEach((ans,i)=>{
+   const b=document.createElement('button');b.className="answer";b.textContent=ans;
+   if(answers[qi]===i&&correctIdx[qi]!==null){b.classList.add(i===correctIdx[qi]?"correct":"wrong");}
+   if(answered){b.classList.add("locked-answer");}
+   b.onclick=()=>answer(i,b);box.appendChild(b);
+ });
+ if(answered){
+   allHighlight();
+   document.getElementById('feedback').innerHTML=answers[qi]===correctIdx[qi]?
+    `✓ <b>Correct.</b> <span style="color:#f5c542">${clues[qi][0]}</span> is unlocked.`:
+    `✕ <b>Answer locked.</b> The correct answer is highlighted.`;
+   clearInterval(timer);document.getElementById('timer').textContent="LOCKED";
+ }else{
+   startQuestionTimer();
+ }
+}
+function startQuestionTimer(){
+ clearInterval(timer);
+ timeLeft=30;
+ updateTimer();
+ fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:selectedTeam,player,type:'open',question:qi})}).catch(()=>{});
+ timer=setInterval(()=>{timeLeft--;updateTimer();if(timeLeft<=0){clearInterval(timer);timeUp();}},1000);
+}
+function allHighlight(){document.querySelectorAll('.answer').forEach((b,n)=>{if(n===correctIdx[qi])b.classList.add('correct');});}
+function updateTimer(){document.getElementById('timer').textContent="00:"+String(timeLeft).padStart(2,"0");}
+async function postJSON(payload){
+ const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team:selectedTeam,player,...payload})});
+ const data=await res.json().catch(()=>({}));
+ return {ok:res.ok,status:res.status,data};
+}
+function answer(i,btn){lockQuestion(i,btn);}
+function timeUp(){lockQuestion(-1,null);}
+async function lockQuestion(choice,btn){
+ if(locked[qi]||busy)return;
+ busy=true;clearInterval(timer);
+ const q=qi;
+ document.querySelectorAll('.answer').forEach(b=>b.disabled=true);
+ let r;
+ try{
+   r=await postJSON({type:"answer",question:q,choice});
+   if(r.status===409&&r.data.error==="not_opened"){await postJSON({type:"open",question:q});r=await postJSON({type:"answer",question:q,choice});}
+ }catch(e){r={ok:false,status:0,data:{}};}
+ busy=false;
+ if(!r.ok){
+   if(qi===q){
+     document.querySelectorAll('.answer').forEach(b=>b.disabled=false);
+     document.getElementById('feedback').innerHTML="⚠️ <b>Connection problem.</b><br>"+(choice===-1?"Time is up – retrying…":"Your answer was not recorded. Please choose again.");
+   }
+   if(choice===-1)setTimeout(()=>{if(qi===q&&!locked[q])lockQuestion(-1,null);},2000);
+   return;
+ }
+ const d=r.data;
+ locked[q]=true;answers[q]=d.timedOut?-1:choice;correctIdx[q]=d.correctIndex;clues[q]=d.clue;
+ if(d.correct)score++;
+ if(d.scores)Object.assign(teamScores,d.scores);
+ if(qi!==q)return;
+ answered=true;
+ document.querySelectorAll('.answer').forEach(b=>{b.disabled=false;b.classList.add('locked-answer');});
+ if(btn&&!d.timedOut)btn.classList.add(d.correct?'correct':'wrong');
+ allHighlight();
+ document.getElementById('scoreDisplay').textContent=`Your Score: ${score} • Team Total: ${teamScores[selectedTeam]}`;
+ if(d.timedOut){
+   document.getElementById('timer').textContent="TIME UP";
+   document.getElementById('reviewStatus').textContent="TIME UP • ANSWER LOCKED";
+   document.getElementById('feedback').innerHTML="⏰ <b>Time is up.</b><br>Your answer is locked and cannot be changed. Review the highlighted evidence.";
+ }else{
+   document.getElementById('timer').textContent="LOCKED";
+   document.getElementById('reviewStatus').textContent="ANSWER LOCKED • YOU CAN REVIEW THIS CASE FILE";
+   document.getElementById('feedback').innerHTML=d.correct?
+    `✓ <b>Correct.</b><br><span style="color:#f5c542">Evidence unlocked: ${d.clue[0]}</span>`:
+    `✕ <b>Locked.</b><br><span style="color:#f5c542">The correct answer is highlighted. Your answer cannot be changed.</span>`;
+ }
+ document.getElementById('nextBtn').classList.remove('hidden');
+}
+function nextQuestion(){if(qi<9){qi++;loadQuestion();}else{renderEvidence(10);show('evidence');}}
+function previousQuestion(){if(qi>0){qi--;loadQuestion();}}
+function renderEvidence(unlocked){
+ const grid=document.getElementById('evidenceGrid');grid.innerHTML="";
+ clues.forEach((clue,i)=>{if(!clue)return;const d=document.createElement('div');d.className="evidence";d.innerHTML=`<h3>${clue[0]}</h3><p>${clue[1]}</p>`;grid.appendChild(d);});
+}
+async function submitAccusation(){
+ if(accusationSubmitted)return;
+ const who=document.getElementById('who').value,where=document.getElementById('where').value,when=document.getElementById('when').value,why=document.getElementById('why').value;
+ if(!who||!where||!when||!why){alert("Detective, complete all four parts of the accusation.");return;}
+ const btn=document.querySelector('#accusation .btn.red');btn.disabled=true;
+ let result;
+ try{result=await postJSON({type:"final",who,where,when,why});}catch(e){result={ok:false,status:0,data:{}};}
+ if(result.status===409&&result.data.completed){localStorage.setItem('dhlDetectivesCompleted|'+selectedTeam+'|'+player,"completed");alert("This detective has already completed the case.");return;}
+ if(!result.ok){btn.disabled=false;alert("The final score could not be recorded. Please check your connection and submit again.");return;}
+ score=result.data.evidencePoints;const final=result.data.total;
+ if(result.data.scores)Object.assign(teamScores,result.data.scores);
+ accusationSubmitted=true;localStorage.setItem('dhlDetectivesCompleted|'+selectedTeam+'|'+player,"completed");document.querySelector('#accusation .btn.red').disabled=true;
+ await refreshLeaderboard();
+ finalTeamScores[selectedTeam]=final;teamScores[selectedTeam]=Math.max(teamScores[selectedTeam]||0,final);document.getElementById('finalScore').textContent=final+" / 20";
+ document.getElementById('resultTitle').textContent=final>=18?"CASE CRACKED!":final>=14?"STRONG DETECTIVE WORK":"CASE NEEDS ANOTHER LOOK";
+ document.getElementById('resultText').textContent=`${player} of ${selectedTeam}, your final recorded score is ${final}/20. Your team scoreboard has been refreshed.`;
+ renderLeaderboard(final);show('result');
+}
+async function refreshLeaderboard(){
+ try{const res=await fetch('/.netlify/functions/score');if(!res.ok)return;const data=await res.json();if(data.scores){Object.assign(teamScores,data.scores);Object.keys(finalTeamScores).forEach(team=>{if(finalTeamScores[team]!==null)teamScores[team]=Math.max(teamScores[team],finalTeamScores[team]);});}}
+ catch(e){console.warn('Leaderboard refresh unavailable.',e);}
+}
+function renderLeaderboard(final){
+ const rows=Object.entries(teamScores).map(([team,total])=>[team,finalTeamScores[team]!==null?Math.max(total,finalTeamScores[team]):total]).sort((a,b)=>b[1]-a[1]);
+ document.getElementById('leaderboard').innerHTML=rows.map((x,i)=>`<div class="score-row"><span class="rank">#${i+1}</span><span><b>${x[0]}</b><br><span class="small">Live team total</span></span><b>${x[1]} pts</b></div>`).join("");
+}
+updatePlayers();
+</script>
+</body>
+</html>
