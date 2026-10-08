@@ -83,7 +83,7 @@ function previousQuestion(){if(qi>0){qi--;loadQuestion()}}
 function renderEvidence(){const grid=document.getElementById('evidenceGrid');grid.innerHTML='';clues.forEach((clue,i)=>{const d=document.createElement('div');d.className='evidence'+(clue?'':' locked');if(clue){d.innerHTML=`<h3>${clue[0]}</h3><p>${clue[1]}</p>`}else{d.innerHTML=`<h3>EVIDENCE ${String(i+1).padStart(2,'0')}</h3><p>LOCKED — solve Case File ${i+1} to reveal this clue.</p>`}grid.appendChild(d)})}
 async function submitAccusation(){if(accusationSubmitted||busy)return;const who=document.getElementById('who').value,where=document.getElementById('where').value,when=document.getElementById('when').value,why=document.getElementById('why').value;if(!who||!where||!when||!why){alert('Detective, complete all four parts of the accusation.');return}busy=true;const r=await api({type:'final',team:selectedTeam,player,who,where,when,why});busy=false;if(!r.ok){alert(r.data.error||'The final score could not be recorded.');return}accusationSubmitted=true;score=r.data.evidencePoints;teamScores=r.data.scores||teamScores;localStorage.setItem('dhlDetectivesCompleted|'+selectedTeam+'|'+player,'completed');document.getElementById('finalScore').textContent=r.data.total+' / 20';document.getElementById('resultTitle').textContent=r.data.total>=18?'CASE CRACKED!':r.data.total>=14?'STRONG DETECTIVE WORK':'CASE NEEDS ANOTHER LOOK';document.getElementById('resultText').textContent=`${player} of ${selectedTeam}, your final recorded score is ${r.data.total}/20.`;renderLeaderboard();show('result')}
 function renderLeaderboard(){const rows=Object.entries(teamScores).sort((a,b)=>b[1]-a[1]);document.getElementById('leaderboard').innerHTML=rows.map(([team,total],i)=>`<div class="score-row"><span class="rank">#${i+1}</span><span><b>${team}</b><br><span class="small">Live team total</span></span><b>${total} pts</b></div>`).join('')}
-async let adminResults=null;
+let adminResults=null;
 async function loadAdminResults(){
   const token=document.getElementById('adminToken').value;
   const msg=document.getElementById('adminMsg');
@@ -115,7 +115,7 @@ function exportResults(){
   XLSX.utils.book_append_sheet(wb,ws1,'Individual Results'); XLSX.utils.book_append_sheet(wb,ws2,'Team Leaderboard');
   XLSX.writeFile(wb,'DHL_Detectives_CSW2026_Results.xlsx');
 }
-function resetPlayer(){const team=document.getElementById('adminTeam').value,player=document.getElementById('adminPlayer').value,token=document.getElementById('adminToken').value,msg=document.getElementById('adminMsg');if(!token){msg.textContent='Enter the reset token first.';msg.className='notice error';return}const r=await api({action:'reset',team,player,token});if(!r.ok){msg.textContent=r.data.error||`Reset failed (HTTP ${r.status}).`;msg.className='notice error';return}localStorage.removeItem('dhlDetectivesCompleted|'+team+'|'+player);msg.innerHTML=`<b class="success">Reset successful.</b><br>${team} • ${player} is ready to play again.<br>Current live score: ${r.data.scores?.[team]??0} pts.`;msg.className='notice';document.getElementById('adminToken').value=''}
+
 function init(){if(adminMode){show('admin');const r={...REAL_ROSTER,...TEST_ROSTER};populateSelect('adminTeam',r);updateAdminPlayers();return}const teams=testMode?{...REAL_ROSTER,...TEST_ROSTER}:REAL_ROSTER;populateSelect('teamSelect',teams);if(testMode){document.getElementById('modeNotice').textContent='TEST MODE • TEST TEAM / TEST DETECTIVE is enabled only for this URL.';document.getElementById('modeNotice').classList.remove('hidden');}updatePlayers()}
 init();
 </script>
