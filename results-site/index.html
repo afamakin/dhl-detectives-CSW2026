@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DHL Detectives — CSW 2026 Grand Finale Results</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f4f4;color:#222}.wrap{max-width:1200px;margin:auto;padding:24px}
+header{background:#d40511;color:#fff;padding:26px;border-radius:14px;margin-bottom:18px}h1{margin:0 0 6px}.card{background:#fff;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 2px 10px #0001}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #ddd;text-align:left}th{background:#eee}.num{text-align:right}.winner{font-size:24px;font-weight:800}.muted{color:#666}.btn{display:inline-block;padding:10px 14px;background:#d40511;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;margin:8px 0}
+@media(max-width:800px){table{font-size:12px}.wrap{padding:12px}}
+</style></head>
+<body><div class="wrap">
+<header><h1>DHL Detectives — Customer Service Week 2026</h1><div>Grand Finale Results</div></header>
+<div class="card"><div id="winner" class="winner">Loading results…</div><div id="updated" class="muted"></div><a class="btn" href="./data/results.json" target="_blank">View raw results</a></div>
+<div class="card"><h2>Team Leaderboard</h2><table><thead><tr><th>Rank</th><th>Team</th><th>Completed</th><th class="num">Team Total</th><th class="num">Average /20</th><th class="num">%</th></tr></thead><tbody id="teams"></tbody></table></div>
+<div class="card"><h2>Individual Results</h2><table><thead><tr><th>Team</th><th>Detective</th><th>Status</th><th class="num">Evidence /10</th><th class="num">Who /3</th><th class="num">Where /2</th><th class="num">When /2</th><th class="num">Why /3</th><th class="num">Bonus /10</th><th class="num">Total /20</th></tr></thead><tbody id="players"></tbody></table></div>
+</div>
+<script>
+fetch("./data/results.json",{cache:"no-store"}).then(r=>r.json()).then(d=>{
+ document.getElementById("winner").textContent=d.teamSummary.length?"🏆 Current leader: "+d.teamSummary[0].team+" — "+d.teamSummary[0].total+" points":"No results";
+ document.getElementById("updated").textContent="Last refreshed: "+new Date(d.generatedAt).toLocaleString();
+ document.getElementById("teams").innerHTML=d.teamSummary.map((x,i)=>`<tr><td><b>${i+1}</b></td><td><b>${x.team}</b></td><td>${x.completedPlayers}/${x.totalPlayers}</td><td class="num">${x.total}</td><td class="num">${x.average.toFixed(2)}</td><td class="num">${x.percentage.toFixed(1)}%</td></tr>`).join("");
+ document.getElementById("players").innerHTML=d.rows.sort((a,b)=>b.total-a.total).map(x=>`<tr><td>${x.team}</td><td>${x.player}</td><td>${x.completed?"Completed":"Not completed"}</td><td class="num">${x.evidencePoints}</td><td class="num">${x.whoPoints}</td><td class="num">${x.wherePoints}</td><td class="num">${x.whenPoints}</td><td class="num">${x.whyPoints}</td><td class="num">${x.bonus}</td><td class="num"><b>${x.total}</b></td></tr>`).join("");
+}).catch(e=>document.getElementById("winner").textContent="Results could not be loaded.");
+</script></body></html>
