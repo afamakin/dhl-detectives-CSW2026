@@ -295,6 +295,69 @@ export default async (req) => {
       type
     } = body || {};
 
+    /* --------------------------- ADMIN RESULTS -------------------------- */
+    /*
+      ADMIN RESULTS:
+      Returns every rostered detective's stored attempt summary.
+      This is protected by the same RESET_TOKEN already used by the
+      browser admin controls. No game player can access it without the token.
+    */
+    if (action === "results") {
+      if (!process.env.RESET_TOKEN || body.token !== process.env.RESET_TOKEN) {
+        return json({ error: "Unauthorized" }, 401);
+      }
+
+      const records = [];
+      const { blobs } = await s.list({ prefix: PLAYER_PREFIX });
+      const stored = await Promise.all(
+        blobs.map((blob) => s.get(blob.key, { type: "json" }))
+      );
+      const byKey = new Map(
+        stored.filter(Boolean).map((rec) => [playerKey(rec.team, rec.player), rec])
+      );
+
+      for (const [teamName, players] of Object.entries(ROSTER)) {
+        for (const playerName of players) {
+          const rec = byKey.get(playerKey(teamName, playerName));
+          const evidence = evidencePoints(rec);
+          const bonus = rec?.bonus || 0;
+          records.push({
+            team: teamName,
+            player: playerName,
+            completed: Boolean(rec?.completed),
+            evidencePoints: evidence,
+            whoPoints: rec?.accusation?.who === ACCUSATION.who.answer ? ACCUSATION.who.points : 0,
+            wherePoints: rec?.accusation?.where === ACCUSATION.where.answer ? ACCUSATION.where.points : 0,
+            whenPoints: rec?.accusation?.when === ACCUSATION.when.answer ? ACCUSATION.when.points : 0,
+            whyPoints: rec?.accusation?.why === ACCUSATION.why.answer ? ACCUSATION.why.points : 0,
+            bonus,
+            total: evidence + bonus,
+            completedAt: rec?.completedAt || "",
+            startedAt: rec?.startedAt || ""
+          });
+        }
+      }
+
+      const teamTotals = await readTotals(s);
+      const teamSummary = Object.entries(teamTotals)
+        .map(([team, total]) => {
+          const teamRows = records.filter((r) => r.team === team);
+          const completedCount = teamRows.filter((r) => r.completed).length;
+          return {
+            team,
+            completedPlayers: completedCount,
+            totalPlayers: teamRows.length,
+            total,
+            average: completedCount ? Number((total / completedCount).toFixed(2)) : 0,
+            maxPossible: completedCount * 20,
+            percentage: completedCount ? Number(((total / (completedCount * 20)) * 100).toFixed(1)) : 0
+          };
+        })
+        .sort((a, b) => b.total - a.total);
+
+      return json({ ok: true, records, teamSummary });
+    }
+
     /* -------------------------- ROSTER CHECK --------------------------- */
 
     if (
